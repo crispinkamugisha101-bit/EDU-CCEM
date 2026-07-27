@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map — EduMap Tanzania</title>
+<link rel="stylesheet" href="styles.css">
+<!-- Leaflet: an open-source mapping library. It draws the tiles
+     (the actual map image) and lets us drop pins on top of it. -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M13 2C7.5 2 3 6.5 3 12c0 8 10 14 10 14s10-6 10-14c0-5.5-4.5-10-10-10z" fill="#D64550"/>
+          <circle cx="13" cy="12" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="brand-name">EduMap<span class="brand-sub">Tanzania</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="map.html" aria-current="page">Map</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="page-body">
+    <div class="wrap">
+      <div class="section-title"><span class="pin-dot"></span><h2>Schools in Tanzania</h2></div>
+      <p class="section-lead" style="margin-bottom:16px;">Pin color shows each school's status. Click a legend item to show or hide that status, click a pin for a quick summary, or open its full profile.</p>
+
+      <!-- legend: same three colors used everywhere in the app,
+           now doubling as filter toggles for the pins below -->
+      <div class="map-legend">
+        <button type="button" class="legend-toggle" id="legend-critical" aria-pressed="true">
+          <span class="status-dot" style="background:#D64550;"></span> Critical need
+        </button>
+        <button type="button" class="legend-toggle" id="legend-moderate" aria-pressed="true">
+          <span class="status-dot" style="background:#E8A33D;"></span> Moderate need
+        </button>
+        <button type="button" class="legend-toggle" id="legend-stable" aria-pressed="true">
+          <span class="status-dot" style="background:#3FA796;"></span> Stable
+        </button>
+      </div>
+
+      <div id="map"></div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>EduMap Tanzania — competition prototype</span>
+      <span>Built for underrepresented schools</span>
+    </div>
+  </footer>
+
+  <!-- Leaflet's JS engine -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+  <script>
+    // 1. Create the map centered on Tanzania, zoomed out enough
+    //    to see the whole country.
+    const map = L.map('map').setView([-6.369, 34.888], 6);
+
+    // 2. Add the actual map tiles (the visual background) from
+    //    OpenStreetMap, a free/open map data source.
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 18
+    }).addTo(map);
+
+    // 3. Build one custom colored pin icon per status so markers
+    //    match the rest of the app's color language.
+    function pinIcon(color) {
+      // We draw the pin as inline SVG rather than an image file,
+      // so there's nothing extra to upload or keep track of.
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="42" viewBox="0 0 30 42">
+          <path d="M15 0C6.7 0 0 6.7 0 15c0 11 15 27 15 27s15-16 15-27C30 6.7 23.3 0 15 0z" fill="${color}"/>
+          <circle cx="15" cy="15" r="6" fill="white"/>
+        </svg>`;
+      return L.divIcon({
+        html: svg,
+        className: "", // avoid Leaflet's default marker box/shadow
+        iconSize: [30, 42],
+        iconAnchor: [15, 42],
+        popupAnchor: [0, -38]
+      });
+    }
+
+    // 4. Load schools from data.js, drop one marker per school,
+    //    and keep them grouped by status so the legend buttons
+    //    can show/hide each group independently.
+    const markersByStatus = { critical: [], moderate: [], stable: [] };
+
+    (async function () {
+      const schools = await getSchools();
+      schools.forEach(school => {
+        const meta = statusMeta(school.status);
+        const marker = L.marker([school.lat, school.lng], { icon: pinIcon(meta.color) });
+
+        marker.bindPopup(`
+          <strong>${school.name}</strong><br>
+          <span style="color:${meta.color}; font-weight:600;">${meta.label}</span><br>
+          ${school.region} · ${ratio(school.students, school.teachers)} student-teacher ratio<br>
+          <a href="school_details.html?id=${school.id}">View full profile →</a>
+        `);
+
+        marker.addTo(map);
+        (markersByStatus[school.status] || markersByStatus.stable).push(marker);
+      });
+    })();
+
+    // 5. Legend buttons toggle their status group on/off the map.
+    function wireLegendToggle(buttonId, statusKey) {
+      const btn = document.getElementById(buttonId);
+      btn.addEventListener("click", function () {
+        const nowOn = btn.getAttribute("aria-pressed") !== "true";
+        btn.setAttribute("aria-pressed", String(nowOn));
+        markersByStatus[statusKey].forEach(m => {
+          if (nowOn) m.addTo(map); else map.removeLayer(m);
+        });
+      });
+    }
+    wireLegendToggle("legend-critical", "critical");
+    wireLegendToggle("legend-moderate", "moderate");
+    wireLegendToggle("legend-stable", "stable");
+  </script>
+</body>
+</html>

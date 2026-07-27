@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduMap Tanzania — Connecting Schools with Support</title>
+<meta name="description" content="EduMap locates underrepresented Tanzanian schools and gives donors, NGOs, and government partners the real numbers to act on.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============ HEADER ============
+       Same header markup is repeated on every page (a real app
+       would pull this from one template/component so you only
+       write it once). site.js finds this markup on every page
+       and injects the mobile menu button automatically. -->
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M13 2C7.5 2 3 6.5 3 12c0 8 10 14 10 14s10-6 10-14c0-5.5-4.5-10-10-10z" fill="#D64550"/>
+          <circle cx="13" cy="12" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="brand-name">EduMap<span class="brand-sub">Tanzania</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============
+       The page's thesis in one line, backed by a live stat row
+       and a schematic pin-cluster graphic (pure SVG, no stock
+       photo) that animates on load: individual pins connecting
+       into one network — literally what EduMap does to a
+       country's worth of scattered schools. -->
+  <section class="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow"><span class="pin-dot" style="background:#FFD9A8"></span> Tanzania · Live prototype</span>
+        <h1>Every underrepresented school, on one map — and one step closer to help.</h1>
+        <p class="lead">EduMap locates schools that need support and gives donors, NGOs, and government partners the real numbers — student-teacher ratios, water access, class sizes — to act on.</p>
+        <div class="hero-actions">
+          <a href="schools.html" class="btn btn-primary">View schools</a>
+          <a href="about.html" class="btn btn-ghost">About this project</a>
+        </div>
+        <div class="stat-row" id="hero-stats">
+          <div><div class="stat-num">—</div><div class="stat-label">Schools mapped</div></div>
+          <div><div class="stat-num">—</div><div class="stat-label">Flagged critical</div></div>
+          <div><div class="stat-num">—</div><div class="stat-label">Regions covered</div></div>
+        </div>
+      </div>
+
+      <!-- schematic pin-cluster: nodes connecting to a central
+           marker. Each element carries its own animation-delay so
+           the network assembles in sequence on load. Skipped
+           entirely for visitors with reduced motion (see CSS). -->
+      <div class="pin-cluster" aria-hidden="true">
+        <svg viewBox="0 0 320 320" fill="none">
+          <line class="net-line" style="animation-delay:.05s" x1="160" y1="140" x2="70" y2="60"  stroke="#3C4A6B" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <line class="net-line" style="animation-delay:.15s" x1="160" y1="140" x2="250" y2="70" stroke="#3C4A6B" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <line class="net-line" style="animation-delay:.25s" x1="160" y1="140" x2="60" y2="230" stroke="#3C4A6B" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <line class="net-line" style="animation-delay:.35s" x1="160" y1="140" x2="260" y2="240" stroke="#3C4A6B" stroke-width="1.5" stroke-dasharray="4 5"/>
+          <circle class="net-node" style="animation-delay:.45s" cx="70" cy="60" r="7" fill="#E8A33D"/>
+          <circle class="net-node" style="animation-delay:.55s" cx="250" cy="70" r="7" fill="#3FA796"/>
+          <circle class="net-node" style="animation-delay:.65s" cx="60" cy="230" r="7" fill="#D64550"/>
+          <circle class="net-node" style="animation-delay:.75s" cx="260" cy="240" r="7" fill="#E8A33D"/>
+          <path class="net-pin-shape" d="M160 100 C182 100 200 118 200 140 C200 168 160 205 160 205 C160 205 120 168 120 140 C120 118 138 100 160 100 Z" fill="#D64550"/>
+          <circle class="net-pin-core" style="animation-delay:.2s" cx="160" cy="140" r="15" fill="#12213D"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE GAP, IN REAL NUMBERS ============
+       Dark band for rhythm (the site shouldn't be cream top to
+       bottom) showing four numbers computed live from whatever
+       schools are currently tracked — never hardcoded, so this
+       section stays honest as the dataset grows. -->
+  <section class="band stat-band" data-reveal>
+    <div class="wrap">
+      <span class="eyebrow-label">Live from the data</span>
+      <h2 style="margin-top:10px;">The gap, in real numbers</h2>
+      <p class="section-lead">Every figure below is computed from the schools currently tracked on EduMap — not a national estimate, a snapshot of what the map already shows.</p>
+      <div class="stat-grid" id="gap-stats">
+        <div class="stat-tile"><div class="big-num" id="gap-total">—</div><div class="big-lbl">Schools tracked</div></div>
+        <div class="stat-tile"><div class="big-num" id="gap-critical">—</div><div class="big-lbl">Flagged critical need</div></div>
+        <div class="stat-tile"><div class="big-num" id="gap-water">—</div><div class="big-lbl">Without water access</div></div>
+        <div class="stat-tile"><div class="big-num" id="gap-ratio">—</div><div class="big-lbl">Avg. student : teacher</div></div>
+      </div>
+      <p class="fine-print">Numbers update automatically as schools are added through Admin — nothing here is typed in by hand.</p>
+    </div>
+  </section>
+
+  <!-- ============ HOW EDUMAP WORKS ============ -->
+  <section class="page-body">
+    <div class="wrap">
+      <div class="section-title" data-reveal><span class="pin-dot"></span><h2>How EduMap works</h2></div>
+      <p class="section-lead" data-reveal>Three steps, in order — each one only works because the step before it did.</p>
+      <div class="pill-list" data-reveal-stagger>
+        <div class="pill-row">
+          <span class="step-num">1</span>
+          <div>
+            <h3>Locate</h3>
+            <p>Every registered school is placed on an interactive map, so gaps in coverage are visible at a glance.</p>
+          </div>
+        </div>
+        <div class="pill-row">
+          <span class="step-num">2</span>
+          <div>
+            <h3>Diagnose</h3>
+            <p>Each school carries real indicators — ratios, water access, class sizes — that show exactly where help is needed.</p>
+          </div>
+        </div>
+        <div class="pill-row">
+          <span class="step-num">3</span>
+          <div>
+            <h3>Connect</h3>
+            <p>Donors, NGOs, and government partners browse, filter, and reach out to the schools that match what they can offer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SPOTLIGHT ============
+       One real school's profile, pulled live from data.js (the
+       one currently flagged most urgent) — proof this is a
+       working data tool, not a mockup with placeholder text. -->
+  <section class="page-body" style="padding-top:0;">
+    <div class="wrap">
+      <div class="section-title" data-reveal><span class="pin-dot"></span><h2>See a real profile</h2></div>
+      <p class="section-lead" data-reveal>This is the school EduMap currently flags as most urgent — the same view every donor and partner sees.</p>
+      <div class="spotlight" data-reveal id="spotlight" style="display:none;">
+        <div class="spotlight-info">
+          <span class="status-badge" id="spot-status" style="margin-bottom:14px;"></span>
+          <h3 id="spot-name" style="font-size:24px;">—</h3>
+          <div class="region" id="spot-region"></div>
+          <p id="spot-desc"></p>
+          <a href="#" id="spot-link" class="btn btn-primary btn-sm" style="margin-top:14px;">View full profile</a>
+        </div>
+        <div class="spotlight-visual">
+          <div class="spotlight-stat"><div class="num" id="spot-ratio">—</div><div class="lbl">Student : teacher ratio</div></div>
+          <div class="spotlight-stat"><div class="num" id="spot-classsize">—</div><div class="lbl">Avg. students per class</div></div>
+          <div class="spotlight-stat"><div class="num" id="spot-needs">—</div><div class="lbl">Needs currently flagged</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AUDIENCE ============ -->
+  <section class="page-body" style="padding-top:0;">
+    <div class="wrap">
+      <div class="section-title" data-reveal><span class="pin-dot"></span><h2>One map, three ways to use it</h2></div>
+      <p class="section-lead" data-reveal>Built for the people who can actually act on what it shows.</p>
+      <div class="audience-grid" data-reveal-stagger>
+        <div class="card card-pad audience-card">
+          <span class="badge">Donors</span>
+          <h3>Give with precision</h3>
+          <p>Skip the guesswork. Filter by what a school actually lacks, and see the exact indicators before committing support.</p>
+          <a class="view-link" href="schools.html">Browse schools by need →</a>
+        </div>
+        <div class="card card-pad audience-card">
+          <span class="badge">NGOs</span>
+          <h3>Plan where it counts</h3>
+          <p>Track patterns across regions and see which gaps — staffing, water, sanitation — show up most, before designing a program.</p>
+          <a class="view-link" href="dashboard.html">Open the dashboard →</a>
+        </div>
+        <div class="card card-pad audience-card">
+          <span class="badge">Government</span>
+          <h3>See the full picture</h3>
+          <p>One shared source of truth for planners and regional officers, instead of scattered paper reports updated once a year.</p>
+          <a class="view-link" href="about.html">Read the prospectus →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLOSING CTA ============ -->
+  <section class="hero" style="padding:64px 0;" data-reveal>
+    <div class="wrap" style="grid-template-columns:1fr; text-align:center;">
+      <div>
+        <h2 style="font-size:clamp(24px,3.4vw,32px); max-width:none;">Ready to see where the need really is?</h2>
+        <p class="lead" style="margin-left:auto; margin-right:auto;">Browse every tracked school, or open the dashboard for the region-level view.</p>
+        <div class="hero-actions" style="justify-content:center;">
+          <a href="schools.html" class="btn btn-primary">View schools</a>
+          <a href="dashboard.html" class="btn btn-ghost">See the dashboard</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>EduMap Tanzania — competition prototype</span>
+      <span>Built for underrepresented schools</span>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+  <script>
+    (async function () {
+      const schools = await getSchools();
+      const stats = computeStats(schools);
+
+      // hero stat row
+      const heroNums = document.querySelectorAll("#hero-stats .stat-num");
+      heroNums[0].textContent = stats.total;
+      heroNums[1].textContent = stats.critical;
+      heroNums[2].textContent = stats.regions;
+
+      // dark stat band
+      document.getElementById("gap-total").textContent = stats.total;
+      document.getElementById("gap-critical").textContent = stats.critical;
+      document.getElementById("gap-water").textContent = stats.withoutWater;
+      document.getElementById("gap-ratio").textContent = stats.avgRatio + ":1";
+
+      // spotlight — the single most urgent tracked school
+      const school = stats.mostUrgent;
+      if (school) {
+        const meta = statusMeta(school.status);
+        document.getElementById("spot-status").innerHTML =
+          `<span class="status-dot" style="background:${meta.color};"></span>${meta.label}`;
+        document.getElementById("spot-status").style.color = meta.color;
+        document.getElementById("spot-name").textContent = school.name;
+        document.getElementById("spot-region").textContent = school.region + " · last updated " + school.lastUpdated;
+        document.getElementById("spot-desc").textContent = school.description;
+        document.getElementById("spot-link").href = "school_details.html?id=" + school.id;
+        document.getElementById("spot-ratio").textContent = ratio(school.students, school.teachers);
+        document.getElementById("spot-classsize").textContent = Math.round(school.students / school.classrooms);
+        document.getElementById("spot-needs").textContent = school.needs.length;
+        document.getElementById("spotlight").style.display = "grid";
+      }
+    })();
+  </script>
+</body>
+</html>

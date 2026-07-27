@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>School profile — EduMap Tanzania</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M13 2C7.5 2 3 6.5 3 12c0 8 10 14 10 14s10-6 10-14c0-5.5-4.5-10-10-10z" fill="#D64550"/>
+          <circle cx="13" cy="12" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="brand-name">EduMap<span class="brand-sub">Tanzania</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Everything below is filled in by JS once we know which
+       school's id was passed in the URL, e.g.
+       school_details.html?id=sch_001 -->
+  <section class="detail-header">
+    <div class="wrap">
+      <div>
+        <span class="status-badge mono" id="detail-status" style="background:rgba(255,255,255,0.1); color:#fff;"></span>
+        <h1 id="detail-name">Loading…</h1>
+        <div class="region" id="detail-region"></div>
+      </div>
+      <a href="schools.html" class="btn btn-ghost on-dark btn-sm">← Back to schools</a>
+    </div>
+  </section>
+
+  <section class="page-body">
+    <div class="wrap" id="detail-body" style="display:none;">
+
+      <!-- key stats: the numbers a donor needs at a glance -->
+      <div class="grid-3" style="margin-bottom:26px;">
+        <div class="card card-pad stat-block">
+          <div class="num" id="stat-ratio">—</div>
+          <div class="lbl">Student : teacher ratio</div>
+        </div>
+        <div class="card card-pad stat-block">
+          <div class="num" id="stat-classsize">—</div>
+          <div class="lbl">Avg. students per class</div>
+        </div>
+        <div class="card card-pad stat-block">
+          <div class="num" id="stat-latrine">—</div>
+          <div class="lbl">Students per latrine</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="card card-pad" style="margin-bottom:22px;">
+            <h3 style="font-size:16px;">About this school</h3>
+            <p id="detail-desc"></p>
+            <div style="display:flex; gap:22px; margin-top:16px; font-size:14px;">
+              <span id="detail-water"></span>
+              <span id="detail-electricity"></span>
+            </div>
+          </div>
+
+          <div class="card card-pad">
+            <h3 style="font-size:16px;">What this school needs</h3>
+            <div id="detail-needs"></div>
+          </div>
+        </div>
+
+        <div class="card card-pad">
+          <h3 style="font-size:16px;">Recent activity</h3>
+          <ul class="timeline" id="detail-activity"></ul>
+        </div>
+      </div>
+    </div>
+
+    <p id="not-found" style="display:none; color:var(--ink-soft);">
+      We couldn't find that school. <a href="schools.html">Back to schools →</a>
+    </p>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>EduMap Tanzania — competition prototype</span>
+      <span>Built for underrepresented schools</span>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+  <script>
+    (async function () {
+      const id = getQueryParam('id');
+      const schools = await getSchools();
+      const school = schools.find(s => s.id === id);
+
+      if (!school) {
+        document.getElementById('not-found').style.display = 'block';
+        document.getElementById('detail-name').textContent = 'School not found';
+        return;
+      }
+
+      const meta = statusMeta(school.status);
+
+      document.title = school.name + " — EduMap Tanzania";
+      document.getElementById('detail-name').textContent = school.name;
+      document.getElementById('detail-region').textContent = school.region + " · last updated " + school.lastUpdated;
+
+      const statusEl = document.getElementById('detail-status');
+      statusEl.textContent = meta.label;
+      statusEl.style.color = meta.color;
+
+      document.getElementById('stat-ratio').textContent = ratio(school.students, school.teachers);
+      document.getElementById('stat-classsize').textContent = Math.round(school.students / school.classrooms);
+      document.getElementById('stat-latrine').textContent = school.latrinesPerStudents;
+
+      document.getElementById('detail-desc').textContent = school.description;
+      document.getElementById('detail-water').innerHTML =
+        (school.water ? "✅" : "⚠️") + " Water access: " + (school.water ? "Available" : "Not available");
+      document.getElementById('detail-electricity').innerHTML =
+        (school.electricity ? "✅" : "⚠️") + " Electricity: " + (school.electricity ? "Available" : "Not available");
+
+      const needsEl = document.getElementById('detail-needs');
+      needsEl.innerHTML = school.needs.length
+        ? school.needs.map(n => `<span class="need-tag"><span class="pin-dot"></span>${n}</span>`).join('')
+        : `<span style="color:var(--ink-soft);">No urgent needs reported.</span>`;
+
+      const activityEl = document.getElementById('detail-activity');
+      activityEl.innerHTML = school.activity.length
+        ? [...school.activity].reverse().map(a => `<li><span class="date">${a.date}</span>${a.note}</li>`).join('')
+        : `<li style="color:var(--ink-soft);">No activity logged yet.</li>`;
+
+      document.getElementById('detail-body').style.display = 'block';
+    })();
+  </script>
+</body>
+</html>

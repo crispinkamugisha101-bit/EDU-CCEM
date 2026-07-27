@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — EduMap Tanzania</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M13 2C7.5 2 3 6.5 3 12c0 8 10 14 10 14s10-6 10-14c0-5.5-4.5-10-10-10z" fill="#D64550"/>
+          <circle cx="13" cy="12" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="brand-name">EduMap<span class="brand-sub">Tanzania</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="dashboard.html" aria-current="page">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="page-body">
+    <div class="wrap">
+      <div class="section-title"><span class="pin-dot"></span><h2>Dashboard</h2></div>
+
+      <!-- KPI ROW: the four numbers a program officer checks first -->
+      <div class="kpi-row">
+        <div class="card kpi"><div class="num" id="kpi-total">—</div><div class="lbl">Schools tracked</div></div>
+        <div class="card kpi"><div class="num" id="kpi-critical">—</div><div class="lbl">Critical need</div></div>
+        <div class="card kpi"><div class="num" id="kpi-water">—</div><div class="lbl">Without water access</div></div>
+        <div class="card kpi"><div class="num" id="kpi-ratio">—</div><div class="lbl">Avg. student : teacher</div></div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="chart-grid">
+        <div class="card card-pad chart-card">
+          <h3>Schools by status</h3>
+          <canvas id="chart-status"></canvas>
+        </div>
+        <div class="card card-pad chart-card">
+          <h3>Water &amp; electricity access</h3>
+          <canvas id="chart-utilities"></canvas>
+        </div>
+      </div>
+      <div class="chart-grid">
+        <div class="card card-pad chart-card" style="grid-column:1 / -1;">
+          <h3>Student-to-teacher ratio by school</h3>
+          <canvas id="chart-ratio"></canvas>
+        </div>
+      </div>
+
+      <!-- ACTIVITY FEED: pulls each school's activity log into one
+           combined, most-recent-first timeline -->
+      <div class="card card-pad">
+        <h3 style="font-size:16px; margin-bottom:16px;">Recent activity across all schools</h3>
+        <ul class="timeline" id="activity-feed"></ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>EduMap Tanzania — competition prototype</span>
+      <span>Built for underrepresented schools</span>
+    </div>
+  </footer>
+
+  <!-- Chart.js: draws the bar/doughnut charts on <canvas> elements -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+  <script>
+    // Shared chart styling so every chart matches the app's palette
+    // instead of Chart.js's default blue/red.
+    Chart.defaults.font.family = "Inter, sans-serif";
+    Chart.defaults.color = "#3C4A6B";
+
+    (async function () {
+      const schools = await getSchools();
+
+      /* ---------- KPI numbers ---------- */
+      const critical = schools.filter(s => s.status === 'critical').length;
+      const noWater = schools.filter(s => !s.water).length;
+      const avgRatio = Math.round(
+        schools.reduce((sum, s) => sum + (s.students / s.teachers), 0) / schools.length
+      );
+      document.getElementById('kpi-total').textContent = schools.length;
+      document.getElementById('kpi-critical').textContent = critical;
+      document.getElementById('kpi-water').textContent = noWater;
+      document.getElementById('kpi-ratio').textContent = avgRatio + ":1";
+
+      /* ---------- Chart 1: schools by status (doughnut) ---------- */
+      const statusCounts = { critical: 0, moderate: 0, stable: 0 };
+      schools.forEach(s => statusCounts[s.status]++);
+      new Chart(document.getElementById('chart-status'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Critical', 'Moderate', 'Stable'],
+          datasets: [{
+            data: [statusCounts.critical, statusCounts.moderate, statusCounts.stable],
+            backgroundColor: ['#D64550', '#E8A33D', '#3FA796'],
+            borderWidth: 0
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+
+      /* ---------- Chart 2: utilities access (bar) ---------- */
+      const withWater = schools.filter(s => s.water).length;
+      const withElectricity = schools.filter(s => s.electricity).length;
+      new Chart(document.getElementById('chart-utilities'), {
+        type: 'bar',
+        data: {
+          labels: ['Water access', 'Electricity'],
+          datasets: [
+            { label: 'Have it', data: [withWater, withElectricity], backgroundColor: '#3FA796' },
+            { label: "Don't have it", data: [schools.length - withWater, schools.length - withElectricity], backgroundColor: '#D64550' }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+
+      /* ---------- Chart 3: ratio per school (horizontal bar) ---------- */
+      new Chart(document.getElementById('chart-ratio'), {
+        type: 'bar',
+        data: {
+          labels: schools.map(s => s.name),
+          datasets: [{
+            label: 'Students per teacher',
+            data: schools.map(s => Math.round(s.students / s.teachers)),
+            backgroundColor: schools.map(s => statusMeta(s.status).color)
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          plugins: { legend: { display: false } },
+          scales: { x: { beginAtZero: true, title: { display: true, text: 'Students per teacher' } } }
+        }
+      });
+
+      /* ---------- Activity feed: merge every school's log ---------- */
+      const allActivity = schools.flatMap(s =>
+        s.activity.map(a => ({ ...a, school: s.name, id: s.id }))
+      ).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      document.getElementById('activity-feed').innerHTML = allActivity.length
+        ? allActivity.map(a => `
+            <li>
+              <span class="date">${a.date}</span>
+              <a href="school_details.html?id=${a.id}" style="font-weight:600; color:var(--ink);">${a.school}</a> — ${a.note}
+            </li>`).join('')
+        : `<li style="color:var(--ink-soft);">No activity yet.</li>`;
+    })();
+  </script>
+</body>
+</html>

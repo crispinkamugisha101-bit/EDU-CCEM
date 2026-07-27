@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — EduMap Tanzania</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M13 2C7.5 2 3 6.5 3 12c0 8 10 14 10 14s10-6 10-14c0-5.5-4.5-10-10-10z" fill="#D64550"/>
+          <circle cx="13" cy="12" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="brand-name">EduMap<span class="brand-sub">Tanzania</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html" aria-current="page">About</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="hero" style="padding:60px 0;">
+    <div class="wrap" style="grid-template-columns:1fr;">
+      <div>
+        <span class="eyebrow"><span class="pin-dot" style="background:#FFD9A8"></span> About the project</span>
+        <h1 style="max-width:22ch;">Why we built EduMap</h1>
+        <p class="lead">A short brief on the problem, the solution, and where this prototype goes next.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="page-body">
+    <div class="wrap" style="max-width:940px;">
+
+      <div class="split" data-reveal-stagger>
+        <div class="card card-pad">
+          <h2 style="font-size:20px;">The problem</h2>
+          <p>Thousands of schools across Tanzania — especially in rural wards — operate with too few teachers, no reliable water source, and classrooms built for half the students they hold.</p>
+          <p>NGOs and government programs want to help, but there is no single, honest picture of <em>which</em> schools need <em>what</em>, so support tends to cluster around the schools that are already easiest to reach.</p>
+        </div>
+        <div class="card card-pad">
+          <h2 style="font-size:20px;">What EduMap is</h2>
+          <p>A web platform that plots underrepresented schools on a map and attaches each one to concrete indicators: student-to-teacher ratio, class size, water and electricity access, and sanitation.</p>
+          <p>It is not a fundraising platform itself — it is the missing layer of visibility that makes existing donor and government programs more precise.</p>
+        </div>
+      </div>
+
+      <div class="card card-pad" style="margin:26px 0;" data-reveal>
+        <blockquote class="pull-quote">
+          "The schools that most need help are usually the hardest to find information about."
+          <cite>The observation EduMap started from</cite>
+        </blockquote>
+        <p style="margin-top:18px;">Well-connected urban schools already have parent associations, alumni networks, and visibility. Rural and under-resourced schools rarely have anyone advocating for them online. EduMap tries to close that gap with data instead of goodwill alone.</p>
+      </div>
+
+      <div class="card card-pad" data-reveal>
+        <h2 style="font-size:20px; margin-bottom:22px;">Prospectus — where this goes next</h2>
+        <ul class="timeline">
+          <li>
+            <span class="date">Phase 1</span>
+            <h3>Verified data pipeline</h3>
+            <p>Partner with regional education officers to update school records, instead of manual admin entry.</p>
+          </li>
+          <li>
+            <span class="date">Phase 2</span>
+            <h3>Donor accounts</h3>
+            <p>Let NGOs save shortlists, message schools, and track pledges over time.</p>
+          </li>
+          <li>
+            <span class="date">Phase 3</span>
+            <h3>Progress tracking</h3>
+            <p>Before/after indicators once a school receives support, so impact is measurable.</p>
+          </li>
+          <li>
+            <span class="date">Phase 4</span>
+            <h3>Mobile-first data entry</h3>
+            <p>A lightweight form teachers or officers can fill from a basic phone in low-connectivity areas.</p>
+          </li>
+        </ul>
+      </div>
+
+      <div style="text-align:center; margin-top:44px;" data-reveal>
+        <h2 style="font-size:22px;">See the problem mapped out</h2>
+        <p class="section-lead" style="margin-left:auto; margin-right:auto;">Every school below carries the real numbers this page just described.</p>
+        <a href="schools.html" class="btn btn-primary">View schools</a>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>EduMap Tanzania — competition prototype</span>
+      <span>Built for underrepresented schools</span>
+    </div>
+  </footer>
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+</body>
+</html>

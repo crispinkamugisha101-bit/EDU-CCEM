@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — EduMap Tanzania</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+          <path d="M13 2C7.5 2 3 6.5 3 12c0 8 10 14 10 14s10-6 10-14c0-5.5-4.5-10-10-10z" fill="#D64550"/>
+          <circle cx="13" cy="12" r="4.5" fill="#fff"/>
+        </svg>
+        <span class="brand-name">EduMap<span class="brand-sub">Tanzania</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="admin.html" aria-current="page">Admin</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="page-body">
+    <div class="wrap">
+      <div class="section-title"><span class="pin-dot"></span><h2>Admin — manage school records</h2></div>
+      <p class="section-lead" style="margin-bottom:10px;">
+        Add a new school or edit an existing one. Changes save immediately and appear on the Map, Schools, and Dashboard pages.
+        <em>Prototype note: in production this form would be behind a login and the data would live in a shared database — here it's saved in your browser's local storage, so it persists on this device across visits.</em>
+      </p>
+      <button type="button" class="btn btn-ghost btn-sm" id="reset-demo" style="margin-bottom:26px;">Reset demo data</button>
+
+      <!-- ============ ADD / EDIT FORM ============ -->
+      <div class="card card-pad" style="margin-bottom:30px;">
+        <h3 id="form-title" style="font-size:16px; margin-bottom:18px;">Add a new school</h3>
+        <form id="school-form">
+          <input type="hidden" id="f-id">
+          <div class="form-grid">
+            <div class="field">
+              <label for="f-name">School name</label>
+              <input type="text" id="f-name" required>
+            </div>
+            <div class="field">
+              <label for="f-region">Region</label>
+              <input type="text" id="f-region" required>
+            </div>
+            <div class="field">
+              <label for="f-lat">Latitude</label>
+              <input type="number" step="any" id="f-lat" required>
+            </div>
+            <div class="field">
+              <label for="f-lng">Longitude</label>
+              <input type="number" step="any" id="f-lng" required>
+            </div>
+            <div class="field">
+              <label for="f-status">Status</label>
+              <select id="f-status">
+                <option value="critical">Critical need</option>
+                <option value="moderate">Moderate need</option>
+                <option value="stable">Stable</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-students">Number of students</label>
+              <input type="number" min="0" id="f-students" required>
+            </div>
+            <div class="field">
+              <label for="f-teachers">Number of teachers</label>
+              <input type="number" min="0" id="f-teachers" required>
+            </div>
+            <div class="field">
+              <label for="f-classrooms">Number of classrooms</label>
+              <input type="number" min="0" id="f-classrooms" required>
+            </div>
+            <div class="field">
+              <label for="f-latrine">Students per latrine</label>
+              <input type="number" min="0" id="f-latrine">
+            </div>
+            <div class="field">
+              <label for="f-needs">Needs (comma-separated)</label>
+              <input type="text" id="f-needs" placeholder="Clean water, more teachers...">
+            </div>
+            <div class="field full">
+              <label>Facilities</label>
+              <div class="checkbox-row">
+                <label><input type="checkbox" id="f-water"> Water access</label>
+                <label><input type="checkbox" id="f-electricity"> Electricity</label>
+              </div>
+            </div>
+            <div class="field full">
+              <label for="f-desc">Description</label>
+              <textarea id="f-desc"></textarea>
+            </div>
+          </div>
+          <div style="margin-top:20px; display:flex; gap:12px;">
+            <button type="submit" class="btn btn-primary" id="submit-btn">Add school</button>
+            <button type="button" class="btn btn-ghost" id="cancel-edit" style="display:none;">Cancel edit</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- ============ EXISTING SCHOOLS TABLE ============ -->
+      <div class="card card-pad">
+        <h3 style="font-size:16px; margin-bottom:16px;">Existing schools</h3>
+        <table class="admin-table">
+          <thead>
+            <tr><th>Name</th><th>Region</th><th>Status</th><th>Ratio</th><th></th></tr>
+          </thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>EduMap Tanzania — competition prototype</span>
+      <span>Built for underrepresented schools</span>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+  <script>
+    let SCHOOLS = [];
+
+    // Draws the admin table rows from the current in-memory list.
+    function renderTable() {
+      if (!SCHOOLS.length) {
+        document.getElementById('admin-tbody').innerHTML =
+          `<tr><td colspan="5" class="admin-empty">No schools yet — add one above, or reset to demo data.</td></tr>`;
+        return;
+      }
+      document.getElementById('admin-tbody').innerHTML = SCHOOLS.map(s => {
+        const meta = statusMeta(s.status);
+        return `
+          <tr>
+            <td>${s.name}</td>
+            <td>${s.region}</td>
+            <td><span class="status-badge" style="color:${meta.color};"><span class="status-dot" style="background:${meta.color};"></span>${meta.label}</span></td>
+            <td class="mono">${ratio(s.students, s.teachers)}</td>
+            <td class="row-actions">
+              <button class="btn btn-ghost btn-sm" onclick="editSchool('${s.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteSchool('${s.id}')">Delete</button>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    // Reads the form fields into a school object.
+    function readForm() {
+      return {
+        name: document.getElementById('f-name').value.trim(),
+        region: document.getElementById('f-region').value.trim(),
+        lat: parseFloat(document.getElementById('f-lat').value),
+        lng: parseFloat(document.getElementById('f-lng').value),
+        status: document.getElementById('f-status').value,
+        students: parseInt(document.getElementById('f-students').value, 10) || 0,
+        teachers: parseInt(document.getElementById('f-teachers').value, 10) || 0,
+        classrooms: parseInt(document.getElementById('f-classrooms').value, 10) || 1,
+        latrinesPerStudents: parseInt(document.getElementById('f-latrine').value, 10) || 0,
+        water: document.getElementById('f-water').checked,
+        electricity: document.getElementById('f-electricity').checked,
+        description: document.getElementById('f-desc').value.trim(),
+        needs: document.getElementById('f-needs').value
+          .split(',').map(n => n.trim()).filter(Boolean)
+      };
+    }
+
+    // Populates the form with an existing school's data, for editing.
+    function fillForm(school) {
+      document.getElementById('f-id').value = school.id;
+      document.getElementById('f-name').value = school.name;
+      document.getElementById('f-region').value = school.region;
+      document.getElementById('f-lat').value = school.lat;
+      document.getElementById('f-lng').value = school.lng;
+      document.getElementById('f-status').value = school.status;
+      document.getElementById('f-students').value = school.students;
+      document.getElementById('f-teachers').value = school.teachers;
+      document.getElementById('f-classrooms').value = school.classrooms;
+      document.getElementById('f-latrine').value = school.latrinesPerStudents;
+      document.getElementById('f-water').checked = school.water;
+      document.getElementById('f-electricity').checked = school.electricity;
+      document.getElementById('f-desc').value = school.description;
+      document.getElementById('f-needs').value = school.needs.join(', ');
+
+      document.getElementById('form-title').textContent = 'Edit ' + school.name;
+      document.getElementById('submit-btn').textContent = 'Save changes';
+      document.getElementById('cancel-edit').style.display = 'inline-flex';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+      document.getElementById('school-form').reset();
+      document.getElementById('f-id').value = '';
+      document.getElementById('form-title').textContent = 'Add a new school';
+      document.getElementById('submit-btn').textContent = 'Add school';
+      document.getElementById('cancel-edit').style.display = 'none';
+    }
+
+    // Called from the table's Edit button.
+    window.editSchool = function (id) {
+      const school = SCHOOLS.find(s => s.id === id);
+      if (school) fillForm(school);
+    };
+
+    // Called from the table's Delete button.
+    window.deleteSchool = async function (id) {
+      if (!confirm('Delete this school? This cannot be undone.')) return;
+      const school = SCHOOLS.find(s => s.id === id);
+      SCHOOLS = SCHOOLS.filter(s => s.id !== id);
+      await saveSchools(SCHOOLS);
+      renderTable();
+      showToast((school ? school.name : 'School') + ' deleted', 'danger');
+    };
+
+    document.getElementById('cancel-edit').addEventListener('click', resetForm);
+
+    document.getElementById('school-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const data = readForm();
+      const editingId = document.getElementById('f-id').value;
+
+      if (editingId) {
+        // Editing: keep the same id and activity log, update the rest.
+        const idx = SCHOOLS.findIndex(s => s.id === editingId);
+        SCHOOLS[idx] = { ...SCHOOLS[idx], ...data, lastUpdated: new Date().toISOString().slice(0, 10) };
+        await saveSchools(SCHOOLS);
+        renderTable();
+        resetForm();
+        showToast(data.name + ' updated');
+      } else {
+        // Adding: generate a fresh id and an empty activity log.
+        SCHOOLS.push({
+          id: makeId(),
+          ...data,
+          lastUpdated: new Date().toISOString().slice(0, 10),
+          activity: [{ date: new Date().toISOString().slice(0, 10), note: "Added to EduMap." }]
+        });
+        await saveSchools(SCHOOLS);
+        renderTable();
+        resetForm();
+        showToast(data.name + ' added');
+      }
+    });
+
+    document.getElementById('reset-demo').addEventListener('click', async function () {
+      if (!confirm('Reset to the original demo schools? Any schools you added or edited will be lost.')) return;
+      SCHOOLS = await resetSchools();
+      renderTable();
+      resetForm();
+      showToast('Demo data reset');
+    });
+
+    (async function init() {
+      SCHOOLS = await getSchools();
+      renderTable();
+    })();
+  </script>
+</body>
+</html>
