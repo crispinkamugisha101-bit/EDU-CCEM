@@ -217,10 +217,65 @@ a { color: inherit; }
 .btn-danger:hover { background: var(--coral); color: #fff; }
 
 /* ---------- hero ---------- */
+/* ===========================
+   HERO SLIDESHOW
+=========================== */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-slideshow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+
+    background-size: cover;
+    background-position: center;
+
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+/* Dark overlay for readability */
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: rgba(0,0,0,0.45);
+
+    z-index: 1;
+}
+
+/* Put the text above the slideshow */
+
+.hero .wrap {
+    position: relative;
+    z-index: 2;
+}
+
+/* Make hero text white */
+
+.hero h1,
+.hero p,
+.hero .eyebrow {
+    color: white;
+}
 .hero {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #FBF7EC, #F3E9D2);
   color: var(--ink);
   padding: 90px 0 70px;
 }
