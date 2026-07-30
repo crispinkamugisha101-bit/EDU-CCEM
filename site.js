@@ -77,17 +77,37 @@ function showToast(message, tone) {
   el.className = "toast is-visible" + (tone ? " toast-" + tone : "");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove("is-visible"), 2600);
-   const slides = document.querySelectorAll(".hero-slide");
-
-let current = 0;
-
-setInterval(() => {
-
-    slides[current].classList.remove("active");
-
-    current = (current + 1) % slides.length;
-
-    slides[current].classList.add("active");
-
-}, 5000);
 }
+
+/* ---------- 4. Hero slideshow ---------- */
+(function () {
+  function startSlideshow() {
+    const slides = document.querySelectorAll(".slideshow .slide");
+
+    console.log("Number of slides found:", slides.length);
+
+    if (slides.length <= 1) {
+      console.warn("Slideshow: Not enough slides found");
+      return;
+    }
+
+    let current = 0;
+
+    slides.forEach((slide, index) => {
+      slide.classList.toggle("active", index === 0);
+    });
+
+    setInterval(() => {
+      slides[current].classList.remove("active");
+      current = (current + 1) % slides.length;
+      slides[current].classList.add("active");
+      console.log("Switched to slide:", current + 1);
+    }, 4000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startSlideshow);
+  } else {
+    startSlideshow();
+  }
+})();

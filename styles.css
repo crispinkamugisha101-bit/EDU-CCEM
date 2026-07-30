@@ -217,34 +217,43 @@ a { color: inherit; }
 .btn-danger:hover { background: var(--coral); color: #fff; }
 
 /* ---------- hero ---------- */
-/* ===========================
-   HERO SLIDESHOW
-=========================== */
+/* ========== HERO SLIDESHOW ========== */
 
 .hero {
-    position: relative;
-    overflow: hidden;
+  position: relative;          /* important so the slideshow can sit behind the content */
+  overflow: hidden;
+  /* keep whatever padding / min-height you already have */
 }
 
-.hero-slideshow {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
+/* The container that holds all the background images */
+.slideshow {
+  position: absolute;
+  inset: 0;                    /* top:0; right:0; bottom:0; left:0; */
+  z-index: 0;                  /* sits behind the text content */
 }
 
-.hero-slide {
-    position: absolute;
-    inset: 0;
-
-    background-size: cover;
-    background-position: center;
-
-    opacity: 0;
-    transition: opacity 1.5s ease-in-out;
+/* Each individual slide */
+.slideshow .slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  z-index: 0;
 }
 
-.hero-slide.active {
-    opacity: 1;
+/* The currently visible slide */
+.slideshow .slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* Make sure the real content (text, buttons, pin-cluster) stays above the images */
+.hero .wrap {
+  position: relative;
+  z-index: 2;
 }
 
 /* Dark overlay for readability */
