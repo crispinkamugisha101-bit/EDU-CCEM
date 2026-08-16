@@ -27,12 +27,49 @@
     </div>
   </header>
 
-  <section class="page-body">
-    <div class="wrap">
+<section class="page-body">
+    
+    <!-- 1. SIGN-IN FORM (Visible by default) -->
+    <div id="login-view" class="wrap" style="max-width: 440px; padding: 20px 0;">
+      <div class="card card-pad" style="text-align: center;">
+        <span class="pin-dot" style="margin-bottom: 12px;"></span>
+        <h2 style="margin-bottom: 6px;">Admin Sign In</h2>
+        <p style="color: var(--ink-soft); font-size: 14px; margin-bottom: 24px;">
+          Sign in to access and manage school records.
+        </p>
+
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+          <div class="field">
+            <label for="admin-email">Email / Username</label>
+            <input type="text" id="admin-email" placeholder="admin@edumap.or.tz" required />
+          </div>
+
+          <div class="field">
+            <label for="admin-password">Password</label>
+            <input type="password" id="admin-password" placeholder="••••••••" required />
+          </div>
+
+          <div id="login-error" style="color: var(--coral-dark); font-size: 13px; font-weight: 600; display: none;">
+            Incorrect password. (Try demo pass: <strong>admin123</strong>)
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%; margin-top: 8px;">
+            Sign In to Dashboard
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. PROTECTED ADMIN VIEW (Hidden until signed in) -->
+    <div id="admin-view" class="wrap" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <span class="eyebrow" style="margin-bottom:0;">Authenticated Admin Session</span>
+        <button type="button" onclick="logoutAdmin()" class="btn btn-ghost btn-sm">Sign Out</button>
+      </div>
+
       <div class="section-title"><span class="pin-dot"></span><h2>Admin — manage school records</h2></div>
       <p class="section-lead" style="margin-bottom:10px;">
         Add a new school or edit an existing one. Changes save immediately and appear on the Map, Schools, and Dashboard pages.
-        <em>Prototype note: in production this form would be behind a login and the data would live in a shared database — here it's saved in your browser's local storage, so it persists on this device across visits.</em>
       </p>
       <button type="button" class="btn btn-ghost btn-sm" id="reset-demo" style="margin-bottom:26px;">Reset demo data</button>
 
@@ -124,8 +161,43 @@
 
   <script src="data.js"></script>
   <script src="site.js"></script>
-  <script>
-    let SCHOOLS = [];
+<script>
+  // Auth elements
+  const loginView = document.getElementById('login-view');
+  const adminView = document.getElementById('admin-view');
+  const loginForm = document.getElementById('login-form');
+  const loginError = document.getElementById('login-error');
+
+  // Check active session
+  if (sessionStorage.getItem('edumap_admin_active') === 'true') {
+    showAdmin();
+  }
+
+  // Handle Login submission
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const password = document.getElementById('admin-password').value.trim();
+
+    // Accepts 'admin123' or any password 4+ chars for prototype testing
+    if (password === 'admin123' || password.length >= 4) {
+      sessionStorage.setItem('edumap_admin_active', 'true');
+      showAdmin();
+    } else {
+      loginError.style.display = 'block';
+    }
+  });
+
+  function showAdmin() {
+    if (loginView) loginView.style.display = 'none';
+    if (adminView) adminView.style.display = 'block';
+  }
+
+  window.logoutAdmin = function() {
+    sessionStorage.removeItem('edumap_admin_active');
+    location.reload();
+  };
+
+  let SCHOOLS = [];
 
     // Draws the admin table rows from the current in-memory list.
     function renderTable() {
