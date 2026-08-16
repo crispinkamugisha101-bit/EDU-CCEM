@@ -174,18 +174,19 @@
   }
 
   // Handle Login submission
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const password = document.getElementById('admin-password').value.trim();
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const password = document.getElementById('admin-password').value.trim();
 
-    // Accepts 'admin123' or any password 4+ chars for prototype testing
-    if (password === 'admin123' || password.length >= 4) {
-      sessionStorage.setItem('edumap_admin_active', 'true');
-      showAdmin();
-    } else {
-      loginError.style.display = 'block';
-    }
-  });
+      if (password === 'admin123' || password.length >= 4) {
+        sessionStorage.setItem('edumap_admin_active', 'true');
+        showAdmin();
+      } else {
+        if (loginError) loginError.style.display = 'block';
+      }
+    });
+  }
 
   function showAdmin() {
     if (loginView) loginView.style.display = 'none';
