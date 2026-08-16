@@ -654,22 +654,207 @@ a { color: inherit; }
 .chart-card h3 { font-size: 15px; margin-bottom: 16px; }
 .chart-card canvas { max-height: 260px; }
 
-/* ---------- footer ---------- */
+/* ============================================================
+   FOOTER — project identity + team
+   ============================================================ */
 
 .site-footer {
   background: var(--ink);
   color: #9FA8C4;
-  padding: 64px 0 28px;
+  padding: 64px 0 26px;
   font-size: 14px;
 }
 
-.footer-top {
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr;
-  gap: 80px;
-  padding-bottom: 52px;
+.site-footer .wrap {
+  display: block;
 }
 
+/* ---------- top footer area ---------- */
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 70px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+/* ---------- project identity ---------- */
+
+.footer-about {
+  max-width: 390px;
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+
+.footer-brand span {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9FA8C4;
+}
+
+.footer-about > p:not(.footer-description) {
+  color: #D9DFEF;
+  font-size: 15px;
+  margin-bottom: 22px;
+}
+
+.footer-description {
+  color: #9FA8C4;
+  line-height: 1.7;
+  max-width: 42ch;
+}
+
+/* ---------- team ---------- */
+
+.footer-team h3 {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin-bottom: 24px;
+}
+
+.team-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 34px;
+}
+
+.team-member {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  min-width: 0;
+}
+
+/* initials circle */
+
+.team-avatar {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: rgba(214,69,80,0.14);
+  border: 1px solid rgba(214,69,80,0.35);
+
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* member name */
+
+.team-member strong {
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+/* member role */
+
+.team-member > div:last-child > span {
+  display: block;
+  color: #9FA8C4;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* social links */
+
+.team-socials {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 9px;
+}
+
+.team-socials a {
+  color: #D9DFEF;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.team-socials a:hover {
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* little separator between social links */
+
+.team-socials a + a::before {
+  content: "·";
+  color: #667392;
+  margin-right: 12px;
+}
+
+/* ---------- bottom footer bar ---------- */
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding-top: 22px;
+
+  color: #7C8DBF;
+  font-size: 12px;
+}
+
+.footer-bottom span:last-child {
+  text-align: right;
+}
+
+/* ---------- responsive footer ---------- */
+
+@media (max-width: 880px) {
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .footer-about {
+    max-width: 520px;
+  }
+
+  .team-list {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+  }
+
+  .footer-bottom span:last-child {
+    text-align: left;
+  }
+}
 /* ---------- footer identity ---------- */
 
 .footer-about {
@@ -880,4 +1065,98 @@ a { color: inherit; }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline: 3px solid var(--amber);
   outline-offset: 2px;
+}
+/* ---------- FOOTER FINAL OVERRIDE ---------- */
+
+.site-footer .wrap {
+  display: block;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 70px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding-top: 22px;
+}
+
+.team-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 34px;
+}
+
+.team-member {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+}
+
+.team-avatar {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(214,69,80,0.14);
+  border: 1px solid rgba(214,69,80,0.35);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.team-member strong {
+  display: block;
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.team-member > div:last-child > span {
+  display: block;
+  color: #9FA8C4;
+  font-size: 12px;
+}
+
+.team-socials {
+  display: flex;
+  gap: 12px;
+  margin-top: 9px;
+}
+
+.team-socials a {
+  color: #D9DFEF;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.team-socials a:hover {
+  color: #fff;
+}
+
+@media (max-width: 880px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+
+  .team-list {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
