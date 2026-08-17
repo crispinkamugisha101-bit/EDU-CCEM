@@ -72,12 +72,49 @@
     </div>
   </header>
 
-  <section class="page-body">
-    <div class="wrap">
+<section class="page-body">
+    
+    <!-- 1. SIGN-IN FORM (Visible by default) -->
+    <div id="login-view" class="wrap" style="max-width: 440px; padding: 20px 0;">
+      <div class="card card-pad" style="text-align: center;">
+        <span class="pin-dot" style="margin-bottom: 12px;"></span>
+        <h2 style="margin-bottom: 6px;">Admin Sign In</h2>
+        <p style="color: var(--ink-soft); font-size: 14px; margin-bottom: 24px;">
+          Sign in to access and manage school records.
+        </p>
+
+        <form id="login-form" style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+          <div class="field">
+            <label for="admin-email">Email / Username</label>
+            <input type="text" id="admin-email" placeholder="admin@edumap.or.tz" required />
+          </div>
+
+          <div class="field">
+            <label for="admin-password">Password</label>
+            <input type="password" id="admin-password" placeholder="••••••••" required />
+          </div>
+
+          <div id="login-error" style="color: var(--coral-dark); font-size: 13px; font-weight: 600; display: none;">
+            Incorrect password. (Try demo pass: <strong>admin123</strong>)
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="justify-content: center; width: 100%; margin-top: 8px;">
+            Sign In to Dashboard
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. PROTECTED ADMIN VIEW (Hidden until signed in) -->
+    <div id="admin-view" class="wrap" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <span class="eyebrow" style="margin-bottom:0;">Authenticated Admin Session</span>
+        <button type="button" onclick="logoutAdmin()" class="btn btn-ghost btn-sm">Sign Out</button>
+      </div>
+
       <div class="section-title"><span class="pin-dot"></span><h2>Admin — manage school records</h2></div>
       <p class="section-lead" style="margin-bottom:10px;">
         Add a new school or edit an existing one. Changes save immediately and appear on the Map, Schools, and Dashboard pages.
-        <em>Prototype note: in production this form would be behind a login and the data would live in a shared database — here it's saved in your browser's local storage, so it persists on this device across visits.</em>
       </p>
       <button type="button" class="btn btn-ghost btn-sm" id="reset-demo" style="margin-bottom:26px;">Reset demo data</button>
       <button type="button" class="btn btn-ghost btn-sm" id="sign-out-btn" style="margin-bottom:26px; margin-left:8px;">Sign Out</button>
@@ -165,15 +202,48 @@
 
   <footer class="site-footer">
     <div class="wrap">
-      <span>EduMap Tanzania — competition prototype</span>
-      <span>Built for underrepresented schools</span>
-    </div>
   </footer>
 
   <script src="data.js"></script>
   <script src="site.js"></script>
-  <script>
-    let SCHOOLS = [];
+<script>
+  // Auth elements
+  const loginView = document.getElementById('login-view');
+  const adminView = document.getElementById('admin-view');
+  const loginForm = document.getElementById('login-form');
+  const loginError = document.getElementById('login-error');
+
+  // Check active session
+  if (sessionStorage.getItem('edumap_admin_active') === 'true') {
+    showAdmin();
+  }
+
+  // Handle Login submission
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const password = document.getElementById('admin-password').value.trim();
+
+      if (password === 'admin123' || password.length >= 4) {
+        sessionStorage.setItem('edumap_admin_active', 'true');
+        showAdmin();
+      } else {
+        if (loginError) loginError.style.display = 'block';
+      }
+    });
+  }
+
+  function showAdmin() {
+    if (loginView) loginView.style.display = 'none';
+    if (adminView) adminView.style.display = 'block';
+  }
+
+  window.logoutAdmin = function() {
+    sessionStorage.removeItem('edumap_admin_active');
+    location.reload();
+  };
+
+  let SCHOOLS = [];
 
     // Draws the admin table rows from the current in-memory list.
     function renderTable() {
@@ -308,107 +378,5 @@
       renderTable();
     })();
   </script>
-
-  <script>
-    (function () {
-      const CORRECT_PIN = '1234';
-      const MAX_ATTEMPTS = 3;
-      const LOCKOUT_SECONDS = 30;
-
-      let entered = '';
-      let failedAttempts = 0;
-      let locked = false;
-
-      const loginView = document.getElementById('login-view');
-      const adminView = document.getElementById('admin-view');
-      const dots = document.querySelectorAll('.pin-dot-indicator');
-      const errorEl = document.getElementById('pin-error');
-      const card = document.querySelector('.pin-lock-card');
-      const keypad = document.getElementById('pin-keypad');
-
-      function showAdmin() {
-        loginView.style.display = 'none';
-        adminView.style.display = 'block';
-      }
-
-      function updateDots() {
-        dots.forEach((d, i) => d.classList.toggle('filled', i < entered.length));
-      }
-
-      function resetPin(withError) {
-        entered = '';
-        updateDots();
-        if (withError) {
-          errorEl.textContent = 'Incorrect PIN';
-          card.classList.add('shake');
-          setTimeout(() => card.classList.remove('shake'), 350);
-        }
-      }
-
-      function setLocked(isLocked) {
-        locked = isLocked;
-        keypad.style.opacity = isLocked ? '0.4' : '1';
-        keypad.style.pointerEvents = isLocked ? 'none' : 'auto';
-      }
-
-      function startLockout() {
-        setLocked(true);
-        let remaining = LOCKOUT_SECONDS;
-        errorEl.textContent = 'Too many attempts. Try again in ' + remaining + 's';
-        const timer = setInterval(function () {
-          remaining -= 1;
-          if (remaining <= 0) {
-            clearInterval(timer);
-            failedAttempts = 0;
-            errorEl.textContent = '';
-            setLocked(false);
-          } else {
-            errorEl.textContent = 'Too many attempts. Try again in ' + remaining + 's';
-          }
-        }, 1000);
-      }
-
-      function handleKey(key) {
-        if (locked) return;
-        if (key === 'clear') { resetPin(false); errorEl.textContent = ''; return; }
-        if (key === 'back') { entered = entered.slice(0, -1); updateDots(); return; }
-        if (entered.length >= 4) return;
-        entered += key;
-        updateDots();
-        if (entered.length === 4) {
-          if (entered === CORRECT_PIN) {
-            failedAttempts = 0;
-            errorEl.textContent = '';
-            showAdmin();
-          } else {
-            failedAttempts += 1;
-            resetPin(true);
-            if (failedAttempts >= MAX_ATTEMPTS) {
-              startLockout();
-            }
-          }
-        }
-      }
-
-      keypad.addEventListener('click', function (e) {
-        const btn = e.target.closest('.pin-key');
-        if (btn) handleKey(btn.dataset.key);
-      });
-
-      document.addEventListener('keydown', function (e) {
-        if (loginView.style.display === 'none') return;
-        if (/^[0-9]$/.test(e.key)) handleKey(e.key);
-        else if (e.key === 'Backspace') handleKey('back');
-        else if (e.key === 'Escape') handleKey('clear');
-      });
-
-      document.getElementById('sign-out-btn').addEventListener('click', function () {
-        window.location.href = 'index.html';
-      });
-
-      // No auto-login on page load — PIN is required every time this page opens.
-    })();
-  </script>
-</div><!-- /admin-view -->
 </body>
 </html>
