@@ -5,6 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — EduMap Tanzaniascm-history-item:c%3A%5CUsers%5CUSER%5COneDrive%5CDesktop%5CEdu.CCEM%E2%9C%8D%EF%B8%8F?%7B%22repositoryId%22%3A%22scm0%22%2C%22historyItemId%22%3A%22481b90392e154d170ccd517c02962633bb569fd1%22%2C%22historyItemParentId%22%3A%22b601278a0e674080480742d31120c76b783e9e66%22%2C%22historyItemDisplayId%22%3A%22481b903%22%7D</title>
 <link rel="stylesheet" href="styles.css">
+  <style>
+    #login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f1ee;padding:20px;}
+    .pin-lock-card{background:#fff;border-radius:16px;padding:36px 30px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.08);}
+    .pin-lock-card h2{font-size:18px;margin-bottom:6px;}
+    .pin-sub{font-size:13px;color:#777;margin-bottom:22px;}
+    .pin-dots{display:flex;justify-content:center;gap:14px;margin-bottom:10px;}
+    .pin-dot-indicator{width:16px;height:16px;border-radius:50%;border:2px solid #D64550;background:transparent;transition:background .15s ease;}
+    .pin-dot-indicator.filled{background:#D64550;}
+    .pin-error{min-height:18px;font-size:12px;color:#D64550;margin-bottom:14px;}
+    .pin-lock-card.shake{animation:pin-shake .35s;}
+    @keyframes pin-shake{10%,90%{transform:translateX(-2px);}20%,80%{transform:translateX(4px);}30%,50%,70%{transform:translateX(-8px);}40%,60%{transform:translateX(8px);}}
+    .pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .pin-key{padding:14px 0;font-size:16px;border-radius:10px;border:1px solid #e4e0dc;background:#faf9f7;cursor:pointer;}
+    .pin-key:hover{background:#f0ede9;}
+    .pin-key-alt{font-size:13px;color:#777;}
+  </style>
 </head>
 <body>
   <header class="site-header">

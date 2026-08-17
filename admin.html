@@ -5,8 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin — EduMap Tanzania</title>
 <link rel="stylesheet" href="styles.css">
+  <style>
+    #login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f1ee;padding:20px;}
+    .pin-lock-card{background:#fff;border-radius:16px;padding:36px 30px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.08);}
+    .pin-lock-card h2{font-size:18px;margin-bottom:6px;}
+    .pin-sub{font-size:13px;color:#777;margin-bottom:22px;}
+    .pin-dots{display:flex;justify-content:center;gap:14px;margin-bottom:10px;}
+    .pin-dot-indicator{width:16px;height:16px;border-radius:50%;border:2px solid #D64550;background:transparent;transition:background .15s ease;}
+    .pin-dot-indicator.filled{background:#D64550;}
+    .pin-error{min-height:18px;font-size:12px;color:#D64550;margin-bottom:14px;}
+    .pin-lock-card.shake{animation:pin-shake .35s;}
+    @keyframes pin-shake{10%,90%{transform:translateX(-2px);}20%,80%{transform:translateX(4px);}30%,50%,70%{transform:translateX(-8px);}40%,60%{transform:translateX(8px);}}
+    .pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .pin-key{padding:14px 0;font-size:16px;border-radius:10px;border:1px solid #e4e0dc;background:#faf9f7;cursor:pointer;}
+    .pin-key:hover{background:#f0ede9;}
+    .pin-key-alt{font-size:13px;color:#777;}
+  </style>
 </head>
 <body>
+  <div id="login-view">
+    <div class="pin-lock-card">
+      <h2>Admin Security Access</h2>
+      <p class="pin-sub">Enter the 4-digit PIN to continue</p>
+      <div class="pin-dots" id="pin-dots">
+        <span class="pin-dot-indicator" data-i="0"></span>
+        <span class="pin-dot-indicator" data-i="1"></span>
+        <span class="pin-dot-indicator" data-i="2"></span>
+        <span class="pin-dot-indicator" data-i="3"></span>
+      </div>
+      <p class="pin-error" id="pin-error"></p>
+      <div class="pin-keypad" id="pin-keypad">
+        <button type="button" class="pin-key" data-key="1">1</button>
+        <button type="button" class="pin-key" data-key="2">2</button>
+        <button type="button" class="pin-key" data-key="3">3</button>
+        <button type="button" class="pin-key" data-key="4">4</button>
+        <button type="button" class="pin-key" data-key="5">5</button>
+        <button type="button" class="pin-key" data-key="6">6</button>
+        <button type="button" class="pin-key" data-key="7">7</button>
+        <button type="button" class="pin-key" data-key="8">8</button>
+        <button type="button" class="pin-key" data-key="9">9</button>
+        <button type="button" class="pin-key pin-key-alt" data-key="clear">Clear</button>
+        <button type="button" class="pin-key" data-key="0">0</button>
+        <button type="button" class="pin-key pin-key-alt" data-key="back">⌫</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-view" style="display:none;">
   <header class="site-header">
     <div class="wrap">
       <a class="brand" href="index.html">
@@ -35,7 +80,7 @@
         <em>Prototype note: in production this form would be behind a login and the data would live in a shared database — here it's saved in your browser's local storage, so it persists on this device across visits.</em>
       </p>
       <button type="button" class="btn btn-ghost btn-sm" id="reset-demo" style="margin-bottom:26px;">Reset demo data</button>
-
+      <button type="button" class="btn btn-ghost btn-sm" id="sign-out-btn" style="margin-bottom:26px; margin-left:8px;">Sign Out</button>
       <!-- =========== ADD / EDIT FORM =========== -->
       <div class="card card-pad" style="margin-bottom:30px;">
         <h3 id="form-title" style="font-size:16px; margin-bottom:18px;">Add a new school</h3>
@@ -263,5 +308,107 @@
       renderTable();
     })();
   </script>
+
+  <script>
+    (function () {
+      const CORRECT_PIN = '1234';
+      const MAX_ATTEMPTS = 3;
+      const LOCKOUT_SECONDS = 30;
+
+      let entered = '';
+      let failedAttempts = 0;
+      let locked = false;
+
+      const loginView = document.getElementById('login-view');
+      const adminView = document.getElementById('admin-view');
+      const dots = document.querySelectorAll('.pin-dot-indicator');
+      const errorEl = document.getElementById('pin-error');
+      const card = document.querySelector('.pin-lock-card');
+      const keypad = document.getElementById('pin-keypad');
+
+      function showAdmin() {
+        loginView.style.display = 'none';
+        adminView.style.display = 'block';
+      }
+
+      function updateDots() {
+        dots.forEach((d, i) => d.classList.toggle('filled', i < entered.length));
+      }
+
+      function resetPin(withError) {
+        entered = '';
+        updateDots();
+        if (withError) {
+          errorEl.textContent = 'Incorrect PIN';
+          card.classList.add('shake');
+          setTimeout(() => card.classList.remove('shake'), 350);
+        }
+      }
+
+      function setLocked(isLocked) {
+        locked = isLocked;
+        keypad.style.opacity = isLocked ? '0.4' : '1';
+        keypad.style.pointerEvents = isLocked ? 'none' : 'auto';
+      }
+
+      function startLockout() {
+        setLocked(true);
+        let remaining = LOCKOUT_SECONDS;
+        errorEl.textContent = 'Too many attempts. Try again in ' + remaining + 's';
+        const timer = setInterval(function () {
+          remaining -= 1;
+          if (remaining <= 0) {
+            clearInterval(timer);
+            failedAttempts = 0;
+            errorEl.textContent = '';
+            setLocked(false);
+          } else {
+            errorEl.textContent = 'Too many attempts. Try again in ' + remaining + 's';
+          }
+        }, 1000);
+      }
+
+      function handleKey(key) {
+        if (locked) return;
+        if (key === 'clear') { resetPin(false); errorEl.textContent = ''; return; }
+        if (key === 'back') { entered = entered.slice(0, -1); updateDots(); return; }
+        if (entered.length >= 4) return;
+        entered += key;
+        updateDots();
+        if (entered.length === 4) {
+          if (entered === CORRECT_PIN) {
+            failedAttempts = 0;
+            errorEl.textContent = '';
+            showAdmin();
+          } else {
+            failedAttempts += 1;
+            resetPin(true);
+            if (failedAttempts >= MAX_ATTEMPTS) {
+              startLockout();
+            }
+          }
+        }
+      }
+
+      keypad.addEventListener('click', function (e) {
+        const btn = e.target.closest('.pin-key');
+        if (btn) handleKey(btn.dataset.key);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (loginView.style.display === 'none') return;
+        if (/^[0-9]$/.test(e.key)) handleKey(e.key);
+        else if (e.key === 'Backspace') handleKey('back');
+        else if (e.key === 'Escape') handleKey('clear');
+      });
+
+      document.getElementById('sign-out-btn').addEventListener('click', function () {
+        window.location.href = 'index.html';
+      });
+
+      // No auto-login on page load — PIN is required every time this page opens.
+    })();
+  </script>
+</div><!-- /admin-view -->
 </body>
 </html>
