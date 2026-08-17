@@ -779,22 +779,23 @@ a { color: inherit; }
 /* initials circle */
 
 .team-avatar {
-  width: 42px;
-  height: 42px;
-  flex: 0 0 42px;
-
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--coral);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
 
-  border-radius: 50%;
-  background: rgba(214,69,80,0.14);
-  border: 1px solid rgba(214,69,80,0.35);
-
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
+.team-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* member name */
@@ -1194,5 +1195,141 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
   .footer-bottom {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+/* ============================================================
+   TEAM FOOTER — FINAL LAYOUT
+   ============================================================ */
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 70px;
+  align-items: start;
+}
+
+.footer-about {
+  min-width: 0;
+}
+
+.footer-team {
+  min-width: 0;
+}
+
+.footer-team h3 {
+  color: #fff;
+  margin-bottom: 28px;
+  font-size: 24px;
+}
+
+/* Two equal columns for the team cards */
+.team-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+/* Every card gets exactly the same width */
+.team-member {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+}
+
+/* Circular photo */
+.team-avatar {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid rgba(214, 69, 80, 0.7);
+  background: var(--coral);
+}
+
+.team-avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Name + role area */
+.team-member > div:last-child {
+  min-width: 0;
+  flex: 1;
+}
+
+.team-member strong {
+  display: block;
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 3px;
+}
+
+.team-member span {
+  display: block;
+  color: #9FA8C4;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Social links */
+.team-socials {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.team-socials a {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.team-socials a:hover {
+  color: var(--coral);
+}
+
+/* Bottom line */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-top: 52px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  color: #7C8DBF;
+  font-size: 13px;
+}
+
+/* ---------- responsive team footer ---------- */
+
+@media (max-width: 900px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 650px) {
+  .team-list {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 }
