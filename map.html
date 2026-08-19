@@ -131,13 +131,24 @@
     wireLegendToggle("legend-moderate", "moderate");
     wireLegendToggle("legend-stable", "stable");
   </script>
-  <footer class="site-footer site-footer-compact">
-  <div class="wrap">
-    <div class="footer-watermark">
-      <span>© 2026 EduMap Tanzania</span>
-      <span>Mapping schools, empowering communities.</span>
+    <!-- COMPACT FOOTER -->
+  <footer class="site-footer-compact">
+    <div class="wrap">
+      <div class="footer-compact-content">
+        <a class="footer-brand-compact" href="index.html">EduMap<span>Tanzania</span></a>
+        <span class="footer-tagline-compact">Every school counted. Every need known.</span>
+        <span class="footer-copy-compact">&copy; 2026 EduMap Tanzania.</span>
+      </div>
     </div>
-  </div>
-</footer>
+  </footer>
+
+  <!-- Leaflet's JS engine -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="data.js"></script>
+  <script src="site.js"></script>
+  <script>
+    // 1. Create the map centered on Tanzania...
+    // ... (keep your existing map script exactly as it is) ...
+  </script>
 </body>
 </html>

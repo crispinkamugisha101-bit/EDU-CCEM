@@ -1333,3 +1333,77 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     gap: 6px;
   }
 }
+.footer-tagline {
+  color: #D9DFEF;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+/* ---------- COMPACT FOOTER (For tool pages) ---------- */
+.site-footer-compact {
+  background: var(--ink);
+  padding: 28px 0;
+  border-top: 3px solid var(--coral); /* Matches the header */
+}
+.footer-compact-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-brand-compact {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+.footer-brand-compact span { color: var(--coral); }
+.footer-tagline-compact {
+  color: #9FA8C4;
+  font-size: 14px;
+  font-weight: 500;
+}
+.footer-copy-compact {
+  color: #7C8DBF;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .footer-compact-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+/* ---------- COMPACT BOTTOM STRIP (For Home & About) ---------- */
+.footer-bottom-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-top: 24px;
+  border-top: 3px solid var(--coral);
+  margin-top: 10px;
+}
+.footer-bottom-compact .brand-compact {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+}
+.footer-bottom-compact .brand-compact span { color: var(--coral); }
+.footer-bottom-compact .tagline-compact {
+  color: #9FA8C4;
+  font-size: 14px;
+  font-weight: 500;
+}
+.footer-bottom-compact .copy-compact {
+  color: #7C8DBF;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .footer-bottom-compact { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
