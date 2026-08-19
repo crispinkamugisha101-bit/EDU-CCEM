@@ -1038,7 +1038,16 @@ a { color: inherit; }
 }
 
 /* ---------- map page ---------- */
-#map { height: 560px; width: 100%; border-radius: var(--radius); border: 1px solid var(--line); }
+#map { 
+  height: 560px; 
+  width: 100%; 
+  border-radius: var(--radius); 
+  border: 1px solid var(--line);
+  position: sticky; 
+  top: 76px; 
+  z-index: 10; 
+  background: var(--paper-raised);
+}
 .map-legend { display: flex; gap: 20px; margin: 16px 0 28px; font-size: 13px; }
 .map-legend span { display: inline-flex; align-items: center; gap: 7px; }
 
