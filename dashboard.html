@@ -164,7 +164,7 @@
         }
       });
 
-      /* ---------- Activity feed: merge every school's log ---------- */
+      /* ---------- Activity feed: merging every school's log ---------- */
       const allActivity = schools.flatMap(s =>
         s.activity.map(a => ({ ...a, school: s.name, id: s.id }))
       ).sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -194,7 +194,7 @@
   <script src="data.js"></script>
   <script src="site.js"></script>
   <script>
-    // ... (keep your existing dashboard script exactly as it is) ...
+ 
   </script>
 </body>
 </html>
