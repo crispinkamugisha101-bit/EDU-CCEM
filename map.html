@@ -67,12 +67,12 @@
     //    to see the whole country.
     const map = L.map('map').setView([-6.369, 34.888], 6);
 
-    // 2. Add the actual map tiles (the visual background) from
-    //    OpenStreetMap, a free/open map data source.
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      maxZoom: 18
-    }).addTo(map);
+// 2. Add the actual map tiles (the visual background) from
+//    OpenStreetMap, a free/open map data source.
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors',
+  maxZoom: 18
+}).addTo(map);
 
     // 3. Build one custom colored pin icon per status so markers
     //    match the rest of the app's color language.
@@ -142,13 +142,5 @@
     </div>
   </footer>
 
-  <!-- Leaflet's JS engine -->
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="data.js"></script>
-  <script src="site.js"></script>
-  <script>
-    // 1. Create the map centered on Tanzania...
-    // ... (keep your existing map script exactly as it is) ...
-  </script>
 </body>
 </html>
