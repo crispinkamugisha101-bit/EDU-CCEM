@@ -107,7 +107,7 @@ const SEED_SCHOOLS = [
     needs: [],
     lastUpdated: "2026-04-11",
     activity: [
-      { date: "2026-04-11", note: "Annual facilities audit completed — no critical gaps." }
+      { date: "2026-04-11", note: "Annual facilities audit completed: no critical gaps." }
     ]
   },
   {
