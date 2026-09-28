@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
+<title>Dashboard | EduMap Tanzania</title>
 <link rel="stylesheet" href="styles.css">
   <style>
+    /* Original Auth/Pin Styles */
     #login-view{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f4f1ee;padding:20px;}
     .pin-lock-card{background:#fff;border-radius:16px;padding:36px 30px;max-width:340px;width:100%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.08);}
     .pin-lock-card h2{font-size:18px;margin-bottom:6px;}
@@ -20,6 +21,154 @@
     .pin-key{padding:14px 0;font-size:16px;border-radius:10px;border:1px solid #e4e0dc;background:#faf9f7;cursor:pointer;}
     .pin-key:hover{background:#f0ede9;}
     .pin-key-alt{font-size:13px;color:#777;}
+
+    /* --- NEW COLLABORATION SPLIT-PANE SECTION --- */
+    .collab-section {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      background: var(--paper-raised, #FFFFFF);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .collab-left {
+      background: var(--ink, #12213D);
+      padding: 60px 40px;
+      color: var(--paper, #F6F3EA);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .collab-left h2 {
+      font-family: var(--font-display, 'Baloo 2', sans-serif);
+      font-size: 32px;
+      line-height: 1.2;
+      color: var(--amber, #E8A33D);
+      margin-bottom: 20px;
+    }
+
+    .collab-left p {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 16px;
+      line-height: 1.6;
+      opacity: 0.9;
+      margin-bottom: 40px;
+    }
+
+    .collab-contact a {
+      color: var(--paper, #F6F3EA);
+      text-decoration: none;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .collab-right {
+      padding: 60px 40px;
+      background: var(--paper-raised, #FFFFFF);
+    }
+
+    /* Tab Switcher */
+    .collab-tabs {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--line, #E3DFD2);
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-soft, #3C4A6B);
+      padding-bottom: 12px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab-btn.active {
+      color: var(--ink, #12213D);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--ink, #12213D);
+    }
+
+    /* Premium Bottom-Line Form Fields */
+    .form-group { margin-bottom: 24px; }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: var(--ink-soft, #3C4A6B);
+      margin-bottom: 8px;
+    }
+
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--line, #E3DFD2);
+      background: transparent;
+      padding: 8px 0;
+      font-size: 16px;
+      color: var(--ink, #12213D);
+      font-family: var(--font-body, 'Inter', sans-serif);
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus, 
+    .form-group select:focus, 
+    .form-group textarea:focus {
+      outline: none;
+      border-bottom-color: var(--ink, #12213D);
+    }
+
+    .btn-submit {
+      background: var(--ink, #12213D);
+      color: #FFF;
+      border: none;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-submit:hover { background: #0a1324; }
+
+    .collab-form { display: none; }
+    .collab-form.active { display: block; animation: fadeIn 0.4s ease; }
+
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(5px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
+    @media (max-width: 768px) {
+      .collab-section { grid-template-columns: 1fr; }
+      .collab-left, .collab-right { padding: 40px 24px; }
+    }
   </style>
 </head>
 <body>
@@ -47,7 +196,7 @@
     <div class="wrap">
       <div class="section-title"><span class="pin-dot"></span><h2>Dashboard</h2></div>
 
-      <!-- KPI ROW: the four numbers a program officer checks first -->
+      <!-- KPI ROW -->
       <div class="kpi-row">
         <div class="card kpi"><div class="num" id="kpi-total">—</div><div class="lbl">Schools tracked</div></div>
         <div class="card kpi"><div class="num" id="kpi-critical">—</div><div class="lbl">Critical need</div></div>
@@ -73,34 +222,115 @@
         </div>
       </div>
 
-      <!-- ACTIVITY FEED: pulls each school's activity log into one
-           combined, most-recent-first timeline -->
+      <!-- ACTIVITY FEED -->
       <div class="card card-pad">
         <h3 style="font-size:16px; margin-bottom:16px;">Recent activity across all schools</h3>
         <ul class="timeline" id="activity-feed"></ul>
       </div>
+
+      <!-- COLLABORATION SPLIT-PANE SECTION -->
+      <div class="collab-section" id="collab-block">
+        
+        <!-- Left Pane: The Pitch -->
+        <div class="collab-left">
+          <h2>Ready to turn unseen needs into visible impact?</h2>
+          <p>Tell us where you fit in the EduMap ecosystem. Whether you are funding interventions, guiding policy, or mapping schools on the ground, we welcome partners who want to bridge the education gap.</p>
+          <div class="collab-contact">
+            <a href="mailto:edumaptanzania@gmail.com">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            edumaptanzania@gmail.com
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Pane: The Forms -->
+        <div class="collab-right">
+          <!-- Tab Toggles -->
+          <div class="collab-tabs">
+            <button class="tab-btn active" data-target="form-partner">Partner With Us</button>
+            <button class="tab-btn" data-target="form-feedback">System Feedback</button>
+          </div>
+
+          <!-- Partner Form (Replace YOUR_FORMSPREE_ID) -->
+         <form id="form-partner" class="collab-form active" action="[https://formspree.io/f/myezlgza](https://formspree.io/f/myezlgza)" method="POST">
+            <div class="form-group">
+              <label>YOUR NAME</label>
+              <input type="text" name="name" placeholder="Full name" required>
+            </div>
+            <div class="form-group">
+              <label>WORK EMAIL</label>
+              <input type="email" name="email" placeholder="you@organisation.org" required>
+            </div>
+            <div class="form-group">
+              <label>I AM A...</label>
+              <select name="role" required>
+                <option value="" disabled selected>Select your role</option>
+                <option value="NGO">NGO / Non-Profit</option>
+                <option value="Donor">Donor / Investor</option>
+                <option value="Government">TAMISEMI / Government</option>
+                <option value="Data">Data Contributor</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>HOW CAN WE WORK TOGETHER?</label>
+              <input type="text" name="message" placeholder="A short note about your project or interest" required>
+            </div>
+            <button type="submit" class="btn-submit">Send inquiry &nearr;</button>
+          </form>
+
+          <!-- Feedback Form (Replace YOUR_FORMSPREE_ID) -->
+          <form id="form-feedback" class="collab-form" action="[https://formspree.io/f/mvkgdpzk](https://formspree.io/f/mvkgdpzk)" method="POST">
+            <div class="form-group">
+              <label>REPORT TYPE</label>
+              <select name="feedback_type" required>
+                <option value="" disabled selected>What are you reporting?</option>
+                <option value="Bug">Platform Bug / Error</option>
+                <option value="Data Correction">School Data Correction</option>
+                <option value="Feature">Feature Request</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>YOUR EMAIL (OPTIONAL)</label>
+              <input type="email" name="email" placeholder="So we can follow up">
+            </div>
+            <div class="form-group">
+              <label>DETAILS</label>
+              <textarea name="details" rows="2" placeholder="Please describe the issue or correction..." required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Submit Feedback &nearr;</button>
+          </form>
+
+        </div>
+      </div>
+      <!-- END COLLABORATION SECTION -->
+
     </div>
   </section>
 
-  <footer class="site-footer">
+  <footer class="site-footer-compact">
     <div class="wrap">
+      <div class="footer-compact-content">
+        <a class="footer-brand-compact" href="index.html">EduMap<span>Tanzania</span></a>
+        <span class="footer-tagline-compact">Every school counted. Every need known.</span>
+        <span class="footer-copy-compact">&copy; 2026 EduMap Tanzania.</span>
+      </div>
     </div>
   </footer>
 
-  <!-- Chart.js: draws the bar/doughnut charts on <canvas> elements -->
+  <!-- Chart.js & Core Data Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="data.js"></script>
   <script src="site.js"></script>
+  
   <script>
-    // Shared chart styling so every chart matches the app's palette
-    // instead of Chart.js's default blue/red.
+    // Shared chart styling
     Chart.defaults.font.family = "Inter, sans-serif";
     Chart.defaults.color = "#3C4A6B";
 
+    // Chart & KPI Initialization
     (async function () {
       const schools = await getSchools();
 
-      /* ---------- KPI numbers ---------- */
       const critical = schools.filter(s => s.status === 'critical').length;
       const noWater = schools.filter(s => !s.water).length;
       const avgRatio = Math.round(
@@ -111,7 +341,6 @@
       document.getElementById('kpi-water').textContent = noWater;
       document.getElementById('kpi-ratio').textContent = avgRatio + ":1";
 
-      /* ---------- Chart 1: schools by status (doughnut) ---------- */
       const statusCounts = { critical: 0, moderate: 0, stable: 0 };
       schools.forEach(s => statusCounts[s.status]++);
       new Chart(document.getElementById('chart-status'), {
@@ -127,7 +356,6 @@
         options: { plugins: { legend: { position: 'bottom' } } }
       });
 
-      /* ---------- Chart 2: utilities access (bar) ---------- */
       const withWater = schools.filter(s => s.water).length;
       const withElectricity = schools.filter(s => s.electricity).length;
       new Chart(document.getElementById('chart-utilities'), {
@@ -146,7 +374,6 @@
         }
       });
 
-      /* ---------- Chart 3: ratio per school (horizontal bar) ---------- */
       new Chart(document.getElementById('chart-ratio'), {
         type: 'bar',
         data: {
@@ -164,7 +391,6 @@
         }
       });
 
-      /* ---------- Activity feed: merging every school's log ---------- */
       const allActivity = schools.flatMap(s =>
         s.activity.map(a => ({ ...a, school: s.name, id: s.id }))
       ).sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -177,24 +403,58 @@
             </li>`).join('')
         : `<li style="color:var(--ink-soft);">No activity yet.</li>`;
     })();
-  </script> 
-  <!-- COMPACT FOOTER -->
-  <footer class="site-footer-compact">
-    <div class="wrap">
-      <div class="footer-compact-content">
-        <a class="footer-brand-compact" href="index.html">EduMap<span>Tanzania</span></a>
-        <span class="footer-tagline-compact">Every school counted. Every need known.</span>
-        <span class="footer-copy-compact">&copy; 2026 EduMap Tanzania.</span>
-      </div>
-    </div>
-  </footer>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-  <script src="data.js"></script>
-  <script src="site.js"></script>
-  <script>
- 
+    // --------------------------------------------------------
+    // NEW COLLABORATION UI & ASYNC FETCH LOGIC
+    // --------------------------------------------------------
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Tab Switching Logic (No Reloads)
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const forms = document.querySelectorAll('.collab-form');
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault(); 
+          tabBtns.forEach(b => b.classList.remove('active'));
+          forms.forEach(f => f.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.getAttribute('data-target')).classList.add('active');
+        });
+      });
+
+      // 2. Headless Form Submission Logic
+      const handleFormSubmit = async (e) => {
+        e.preventDefault(); // Stop standard redirect
+        const form = e.target;
+        const btn = form.querySelector('.btn-submit');
+        const originalBtnText = btn.innerHTML;
+        
+        btn.innerHTML = 'Sending...';
+        btn.disabled = true;
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: { 'Accept': 'application/json' }
+          });
+          
+          if (response.ok) {
+            // Smooth inline success state
+            form.innerHTML = '<div style="padding:40px 0; color:var(--teal, #3FA796); font-family:var(--font-display, sans-serif); font-weight:600; font-size:20px;">Asante sana! We have received your inquiry and will be in touch shortly.</div>';
+          } else {
+            btn.innerHTML = 'Error. Try Again.';
+            btn.disabled = false;
+          }
+        } catch (error) {
+          btn.innerHTML = 'Network Error. Try Again.';
+          btn.disabled = false;
+        }
+      };
+
+      document.getElementById('form-partner').addEventListener('submit', handleFormSubmit);
+      document.getElementById('form-feedback').addEventListener('submit', handleFormSubmit);
+    });
   </script>
 </body>
 </html>
