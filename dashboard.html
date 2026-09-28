@@ -422,12 +422,41 @@
         });
       });
 
-      // 2. Headless Form Submission Logic
+      // 2. Headless Form Submission Logic (JSON Format for CORS bypass)
       const handleFormSubmit = async (e) => {
         e.preventDefault(); // Stop standard redirect
         const form = e.target;
         const btn = form.querySelector('.btn-submit');
-        const originalBtnText = btn.innerHTML;
+        
+        btn.innerHTML = 'Sending...';
+        btn.disabled = true;
+
+        // Convert the raw form data into a clean JSON object
+        const formData = new FormData(form);
+        const dataObject = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch(form.action, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json' 
+            },
+            body: JSON.stringify(dataObject) // Send as JSON string
+          });
+          
+          if (response.ok) {
+            // Smooth inline success state
+            form.innerHTML = '<div style="padding:40px 0; color:var(--teal, #3FA796); font-family:var(--font-display, sans-serif); font-weight:600; font-size:20px;">Asante sana! We have received your inquiry and will be in touch shortly.</div>';
+          } else {
+            btn.innerHTML = 'Error. Try Again.';
+            btn.disabled = false;
+          }
+        } catch (error) {
+          btn.innerHTML = 'Network Error. Try Again.';
+          btn.disabled = false;
+        }
+      };
         
         btn.innerHTML = 'Sending...';
         btn.disabled = true;
